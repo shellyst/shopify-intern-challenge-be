@@ -1,0 +1,5 @@
+-- DROP DATABASE.
+DROP DATABASE IF EXISTS logistics_db;
+
+-- CREATE DATABASE.
+CREATE DATABASE logistics_db;
