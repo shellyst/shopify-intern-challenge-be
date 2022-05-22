@@ -1,6 +1,10 @@
 const router = require("express").Router();
-const { Warehouse, Category, ProductWarehouse } = require("../../models");
-const { Product } = require("../../models/Category");
+const {
+  Product,
+  Warehouse,
+  Category,
+  ProductWarehouse,
+} = require("../../models");
 
 // Gets all product routes.
 router.get("/", (req, res) => {
@@ -26,7 +30,7 @@ router.get("/", (req, res) => {
 });
 
 // Return a single product by id.
-router.get(":/id", (req, res) => {
+router.get("/:id", (req, res) => {
   // Includes associated Product and Warehouse.
   Product.findOne({
     where: {
@@ -64,22 +68,28 @@ router.post("/", (req, res) => {
     stock: req.body.stock,
     category_id: req.body.category_id,
     warehouseIds: req.body.warehouseIds,
-  }).then((product) => {
-    //   If there are product warehouses, we need to create pairings to bulk create in the ProductWarehouse model.
-    if (req.body.warehouseIds.length) {
-      const productWarehouseIdArr = req.body.warehouseIds.map(
-        (warehouse_id) => {
-          return {
-            product_id: product.id,
-            warehouse_id,
-          };
-        }
-      );
-      return ProductWarehouse.bulkCreate(productWarehouseIdArr);
-    }
-    // If no product warehouses, just respond.
-    res.status(200).json(product);
-  });
+  })
+    .then((product) => {
+      //   If there are product warehouses, we need to create pairings to bulk create in the ProductWarehouse model.
+      if (req.body.warehouseIds.length) {
+        const productWarehouseIdArr = req.body.warehouseIds.map(
+          (warehouse_id) => {
+            return {
+              product_id: product.id,
+              warehouse_id,
+            };
+          }
+        );
+        return ProductWarehouse.bulkCreate(productWarehouseIdArr);
+      }
+      // If no product warehouses, just respond.
+      res.status(200).json(product);
+    })
+    .then((productWarehouseIds) => res.status(200).json(productWarehouseIds))
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json(err);
+    });
 });
 
 // Update product.
