@@ -49,4 +49,38 @@ router.get("/:id", (req, res) => {
     });
 });
 
+router.post("/", (req, res) => {
+  // Create a new warehouse.
+  Warehouse.create({
+    warehouse_name: req.body.warehouse_name,
+  })
+    .then((warehouse) => {
+      res.json(warehouse);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+// Update warehouse by its `id` value.
+router.put("/:id", (req, res) => {
+  Warehouse.update(req.body, {
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((warehouse) => {
+      if (!warehouse[0]) {
+        res.status(404).json({ message: "No warehouse found with this id." });
+        return;
+      }
+      res.json(warehouse);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
 module.exports = router;
