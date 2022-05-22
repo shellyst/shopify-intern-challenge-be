@@ -80,6 +80,25 @@ router.put("/:id", (req, res) => {
     });
 });
 
-
+// Delete a category by its id value.
+router.delete("/:id", (req, res) => {
+  Category.destroy({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((category) => {
+      if (!category) {
+        res
+          .status(400)
+          .json({ message: "There is no category found with that id." });
+      }
+      res.json(category);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
 
 module.exports = router;
