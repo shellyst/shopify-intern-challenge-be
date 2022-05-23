@@ -20,7 +20,7 @@ ProductWarehouse.init(
       },
     },
 
-    tag_id: {
+    warehouse_id: {
       type: DataTypes.INTEGER,
       references: {
         model: "warehouse",
